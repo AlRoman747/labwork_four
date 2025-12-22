@@ -1,10 +1,6 @@
 import os
-
 import requests
-import json
-
 from dotenv import load_dotenv
-from pathlib import Path
 
 
 class Book:

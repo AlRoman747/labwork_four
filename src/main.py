@@ -37,7 +37,6 @@ def main() -> None:
                     writer = GetWrittenBook(url, headers, prompt_data)
                     generated_text = writer.book_to_read()
 
-                    # 5. Сохраните результат
                     print("=" * 50)
                     print(generated_text)
 

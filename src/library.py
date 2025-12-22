@@ -1,4 +1,10 @@
-from logging import exception
+import os
+
+import requests
+import json
+
+from dotenv import load_dotenv
+from pathlib import Path
 
 
 class Book:
@@ -9,7 +15,7 @@ class Book:
         self.year = year
         self.genre = genre
         self.isbn = isbn
-
+        self.content = None
 
     def __repr__(self):
         return f'{self.title} {self.author} {self.year} {self.genre} {self.isbn}'
@@ -37,7 +43,7 @@ class BookCollection:
                 for item in self._items[key]:
                     new_list.add(item)
                 return new_list
-        except: raise IndexError("такой книги нет")
+        except: raise IndexError("The book is doesn't exist")
     def __iter__(self) -> list:
         return iter(self._items)
 
@@ -64,19 +70,20 @@ class BookCatalog:
             del self._by_isbn[book.isbn]
             self._by_year[book.year].remove(del_book)
             self._by_author[book.author].remove(del_book)
-        except: raise ValueError("Указан неправильный isbn книги для удаления")
+        except: raise ValueError("incorrect book's isbn for delete")
+
     def get_by_isbn(self, isbn: str) -> Book:
         try: return self._by_isbn[str(isbn)]
-        except: raise KeyError("Указан неправильный isbn книги")
+        except: raise KeyError("incorrect book's isbn")
 
     def get_by_author(self, author: str) -> list:
         try: return self._by_author[str(author)]
-        except: raise KeyError("Указан неправильный автор книги")
+        except: raise KeyError("incorrect book's author")
 
 
     def get_by_year(self, year: int) -> list:
         try: return self._by_year[int(year)]
-        except: raise KeyError("Указан неправильный год книги")
+        except: raise KeyError("incorrect book's year")
 
 
 
@@ -92,5 +99,61 @@ class Library:
     def search_by_year(self, year: int) -> list:
         return self.IndexDict.get_by_year(year)
 
-    
+class GenerateBook:
+    def __init__(self, book: Book):
+        self.book = book
+
+    def build_book(self):
+        load_dotenv()
+
+        CATALOG_ID = os.getenv("YC_CATALOG_ID")
+        API_KEY = os.getenv("YC_API_KEY")
+        MODEL = "yandexgpt-lite"  # Используемая модель
+
+        url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Api-Key {API_KEY}"
+        }
+
+        # Текст промта для модели
+        prompt_data = {
+            "modelUri": f"gpt://{CATALOG_ID}/{MODEL}",
+            "completionOptions": {
+                "stream": False,
+                "temperature": 0.7,
+                "maxTokens": "1000"
+            },
+            "messages": [
+                {
+                    "role": "system",
+                    "text": f"You are a master of literary stylization. Your task is to write in the style of {self.book.author}. \
+                            In the style of the {self.book.year}s. Use techniques from the {self.book.genre} genre."
+                },
+                {
+                    "role": "user",
+                    "text": f"{self.book.title}"
+                }
+            ]
+        }
+
+        return url, headers, prompt_data
+
+class GetWrittenBook:
+    def __init__(self, url, headers, prompt_data):
+        self.url = url; self.headers = headers; self.prompt_data = prompt_data
+    def book_to_read(self):
+        try:
+            response = requests.post(self.url, headers=self.headers, json=self.prompt_data)
+            response.raise_for_status()  # Проверка на ошибки HTTP
+
+            result = response.json()
+            # Извлечение сгенерированного текста из ответа
+            generated_text = result["result"]["alternatives"][0]["message"]["text"]
+
+            return generated_text
+
+        except Exception as e:
+            raise ValueError(f"Error with generate: {e}")
 

@@ -62,10 +62,8 @@ def functions(book, removed_book):
                 "get_with_error_list": (book_list.__getitem__, book_list.__len__()),
                 "get_with_error_dict": (book_dict.get_by_isbn, "")
     }
-# start_book()
+start_book()
 # print(*book_list, sep='\n')
-
-print('='*500)
 def get_commands(n):
     for i in range(1, n+1):
         book = generate_book()

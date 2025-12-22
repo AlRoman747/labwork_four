@@ -42,6 +42,7 @@ class BookCollection:
         except KeyError: raise KeyError("KeyError. The book doesn't exist.")
         except ValueError: raise ValueError("ValueError. The book doesn't exist.")
         except TypeError: raise TypeError("TypeError. The book doesn't exist.")
+        except IndexError: raise IndexError("IndexError. The book doesn't exist.")
         except Exception: raise "The book doesn't exist."
     def __iter__(self) -> list:
         return iter(self._items)

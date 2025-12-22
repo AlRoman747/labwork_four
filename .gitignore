@@ -10,7 +10,11 @@ src/.env
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+uv.lock
+requirements.txt
+package-lock.json
+package.json
+.pre-commit-config.yaml
 # AWS User-specific
 .idea/**/aws.xml
 

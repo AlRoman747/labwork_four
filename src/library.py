@@ -99,26 +99,35 @@ class Library:
     def search_by_year(self, year: int) -> list:
         return self.IndexDict.get_by_year(year)
 
-class GenerateBook:
+
+class BaseLLMClient:
+    def __init__(self, url: str, headers: dict):
+        self.url = url
+        self.headers = headers
+
+    def _post(self, payload: dict) -> dict:
+        response = requests.post(self.url, headers=self.headers, json=payload)
+        response.raise_for_status()
+        return response.json()
+
+class GenerateBook(BaseLLMClient):
     def __init__(self, book: Book):
         self.book = book
-
-    def build_book(self):
         load_dotenv()
 
         CATALOG_ID = os.getenv("YC_CATALOG_ID")
         API_KEY = os.getenv("YC_API_KEY")
-        MODEL = "yandexgpt-lite"  # Используемая модель
+        MODEL = "yandexgpt-lite"
 
         url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Api-Key {API_KEY}"
         }
 
-        # Текст промта для модели
-        prompt_data = {
+        super().__init__(url, headers)
+
+        self.prompt_data = {
             "modelUri": f"gpt://{CATALOG_ID}/{MODEL}",
             "completionOptions": {
                 "stream": False,
@@ -128,32 +137,34 @@ class GenerateBook:
             "messages": [
                 {
                     "role": "system",
-                    "text": f"You are a master of literary stylization. Your task is to write in the style of {self.book.author}. \
-                            In the style of the {self.book.year}s. Use techniques from the {self.book.genre} genre."
+                    "text": (
+                        f"You are a master of literary stylization. "
+                        f"Write in the style of {self.book.author}, "
+                        f"{self.book.year}s, genre {self.book.genre}."
+                    )
                 },
                 {
                     "role": "user",
-                    "text": f"{self.book.title}"
+                    "text": self.book.title
                 }
             ]
         }
 
-        return url, headers, prompt_data
+    def build_book(self):
+        # интерфейс сохранён
+        return self.url, self.headers, self.prompt_data
 
-class GetWrittenBook:
+
+class GetWrittenBook(BaseLLMClient):
     def __init__(self, url, headers, prompt_data):
-        self.url = url; self.headers = headers; self.prompt_data = prompt_data
+        super().__init__(url, headers)
+        self.prompt_data = prompt_data
+
     def book_to_read(self):
         try:
-            response = requests.post(self.url, headers=self.headers, json=self.prompt_data)
-            response.raise_for_status()  # Проверка на ошибки HTTP
-
-            result = response.json()
-            # Извлечение сгенерированного текста из ответа
-            generated_text = result["result"]["alternatives"][0]["message"]["text"]
-
-            return generated_text
-
+            result = self._post(self.prompt_data)
+            return result["result"]["alternatives"][0]["message"]["text"]
         except Exception as e:
             raise ValueError(f"Error with generate: {e}")
+
 

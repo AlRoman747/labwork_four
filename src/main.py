@@ -1,6 +1,6 @@
 from src.simulation import *
-
-
+from pathlib import Path
+import os
 def main() -> None:
     print(f"Welcome to console library\nIf you wanna leave the library, write -1\nBut, if you wanna get into the world of fictional books, write your favorite author")
     move = input()
@@ -39,12 +39,16 @@ def main() -> None:
 
                     print("=" * 50)
                     print(generated_text)
-
+                    start = Path.cwd()
+                    os.chdir("..")
+                    path = Path("texts").expanduser().resolve()
+                    os.chdir(path)
                     # Сохранение в файл
                     with open(f"{book.title}.txt", "w", encoding="utf-8") as f:
+
                         f.write(f"{book.title} by {book.author} in genre: {book.genre}; {book.year} year\n")
                         f.write(generated_text)
-
+                        os.chdir(start)
                 except Exception as e:
                     print(f"error: {e}")
 

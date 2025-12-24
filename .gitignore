@@ -4,6 +4,7 @@
 
 # User-specific stuff
 src/.env
+texts
 .idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml

@@ -15,9 +15,9 @@ def main() -> None:
         try:
             action = int(input())
             if action == 1:
-                print("write how many actions in simulation you want")
-                steps = int(input())
-                get_commands(steps)
+                print("write how many actions in simulation you want and your seed")
+                steps, seed = int(input()), int(input())
+                get_commands(steps, seed)
             elif action == 2:
                 print("write author of book, title, genre and in what year this book wrote")
                 author, title, genre, year = input(), input(), input(), int(input())

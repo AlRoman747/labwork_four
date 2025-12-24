@@ -33,6 +33,13 @@ genres = ["Fiction", "Non-Fiction", "Science Fiction", "Fantasy", "Mystery", "Th
 def rand_book(seed):
     book = generate_book()
     return book
+
+def rand_sim(seed):
+    get_commands(5, seed)
+
+def test_rand_sim():
+    rand_sim(748)
+    rand_sim(748)
 def test_book_author():
     book = rand_book(748)
     assert book.author in authors

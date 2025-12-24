@@ -64,42 +64,61 @@ def functions(book, removed_book):
     }
 start_book()
 # print(*book_list, sep='\n')
-def get_commands(n):
-    for i in range(1, n+1):
-        book = generate_book()
-        removed_book = random.choice(book_list)
-        random_command = random.choice(list(functions(book, removed_book).keys()))
-        func = functions(book, removed_book)[random_command]
 
-        if random_command == "add":
-            print(f"случайное событие №{i} - добавление книги: {book.__repr__()}")
-            func[0](func[-1])
-            func[1](func[-1])
-            authors.add(book.author); years.add(book.year); isbns.add(book.isbn)
-        elif random_command == "remove":
-            print(f"случайное событие №{i} - удаление книги: {removed_book.__repr__()}")
-            func[0](func[-1])
-            func[1](func[-1])
-            authors.discard(removed_book.author); years.discard(removed_book.year); isbns.discard(removed_book.isbn)
+d = {}
+def get_commands(n, seed):
 
-        elif random_command == "search_by_isbn":
-            rand_isbn = random.choice(list(isbns))
-            print(f"случайное событие №{i} - поиск книги по isbn: {rand_isbn}")
-            print(func(rand_isbn))
-        elif random_command == "search_by_year":
-            rand_year = random.choice(list(years))
-            print(f"случайное событие №{i} - поиск книг за этот год: {rand_year}")
-            print(func(rand_year))
-        elif random_command == "search_by_author":
-            rand_author = random.choice(list(authors))
-            print(f"случайное событие №{i} - поиск книг этого автора: {rand_author}")
-            print(func(rand_author))
+    d.setdefault(seed, [])
+    if d[seed]:
+        print(*[i for i in d[seed]], sep='\n')
+    else:
+        for i in range(1, n+1):
+            book = generate_book()
+            removed_book = random.choice(book_list)
+            random_command = random.choice(list(functions(book, removed_book).keys()))
+            func = functions(book, removed_book)[random_command]
 
-        elif random_command == "get_with_error_list":
-            print(f"случайное событие №{i} - поиск книги с ошибкой")
-            try: func[0](func[-1])
-            except Exception as e: print(e)
-        elif random_command == "get_with_error_dict":
-            print(f"случайное событие №{i} - поиск книги по isbn с ошибкой")
-            try: func[0](func[-1])
-            except Exception as e: print(e)
+            if random_command == "add":
+                print(f"случайное событие №{i} - добавление книги: {book.__repr__()}")
+                d[seed].append(f"случайное событие №{i} - добавление книги: {book.__repr__()}")
+                func[0](func[-1])
+                func[1](func[-1])
+                authors.add(book.author); years.add(book.year); isbns.add(book.isbn)
+            elif random_command == "remove":
+                print(f"случайное событие №{i} - удаление книги: {removed_book.__repr__()}")
+                d[seed].append(f"случайное событие №{i} - удаление книги: {removed_book.__repr__()}")
+
+                func[0](func[-1])
+                func[1](func[-1])
+                authors.discard(removed_book.author); years.discard(removed_book.year); isbns.discard(removed_book.isbn)
+
+            elif random_command == "search_by_isbn":
+                rand_isbn = random.choice(list(isbns))
+                print(f"случайное событие №{i} - поиск книги по isbn: {rand_isbn}")
+                d[seed].append(f"случайное событие №{i} - поиск книги по isbn: {rand_isbn}")
+                print(func(rand_isbn))
+                d[seed].append(func(rand_author))
+            elif random_command == "search_by_year":
+                rand_year = random.choice(list(years))
+                print(f"случайное событие №{i} - поиск книг за этот год: {rand_year}")
+                d[seed].append(f"случайное событие №{i} - поиск книги по isbn: {rand_isbn}")
+                print(func(rand_year))
+                d[seed].append(func(rand_year))
+            elif random_command == "search_by_author":
+                rand_author = random.choice(list(authors))
+                print(f"случайное событие №{i} - поиск книг этого автора: {rand_author}")
+                d[seed].append(f"случайное событие №{i} - поиск книг этого автора: {rand_author}")
+                print(func(rand_author))
+                d[seed].append(func(rand_author))
+
+
+            elif random_command == "get_with_error_list":
+                print(f"случайное событие №{i} - поиск книги с ошибкой")
+                d[seed].append(f"случайное событие №{i} - поиск книги с ошибкой")
+                try: func[0](func[-1])
+                except Exception as e: print(e); d[seed].append(str(e))
+            elif random_command == "get_with_error_dict":
+                print(f"случайное событие №{i} - поиск книги по isbn с ошибкой")
+                d[seed].append(f"случайное событие №{i} - поиск книги по isbn с ошибкой")
+                try: func[0](func[-1])
+                except Exception as e: print(e); d[seed].append(str(e))

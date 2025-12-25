@@ -1,54 +1,86 @@
-# Лабараторная работа №4 ооп библиотека
+# Laboratory Work No. 4: OOP Library
 
-## Введение
-ООП-проект библиотека предоставляет возможность генерировать случайные события с книгами, добавлять книгу на полку, генерировать случайную книгу с помощью ИИ. 
-Как запустить? Для начала создайте файл .env и папку texts в папке с проектом, чтобы вы могли генирировать тектсты. В .env поместите свой ключ от API и id вашего агента из yandex cloude. Без них не получится генирировать текст. В созданной вами папке texts будут лежать сгенерированные вами тексты. В будующем планируется добавлять возможность генерации текстов выбранных вами авторов с вашими названиями, жанрами и временной стилистики текста. 
+## Introduction
+The OOP-based **Library** project provides functionality for generating random book-related events, adding books to shelves, and generating random books using AI.
+
+## How to Run
+First, create a `.env` file and a `texts` directory in the project root. This is required for text generation.
+
+In the `.env` file, add your **API key** and your **agent ID** from **Yandex Cloud**. Without these credentials, text generation will not work.
+
+All generated texts will be stored in the `texts` directory.
+
+In future versions, it is planned to add support for generating texts by selected authors, with custom titles, genres, and time-based stylistic settings.
+
+---
+
+## Project Structure
 
 
-## Структура проекта
 
  <pre>
 ├── src/
-|   ├── .env                          # api ключи для нейронки
-│   ├── library.py                    # реализация всех классов
-|   ├── main.py                       # запуск библиотеки через консоль
-|   ├── simulation.py                 # создание случайных книг
+│   ├── .env                          # API keys for the neural network
+│   ├── library.py                    # Implementation of all core classes
+│   ├── main.py                       # Entry point for running the library via CLI
+│   ├── simulation.py                 # Random book generation logic
 │   └── __init__.py
 │
 ├── tests/
-│   ├── rand_generate.py              # генерация различных массивов
-│   ├── sorting_test.py               # тестирование сортировок
-│   ├── stack_test.py                 # тестирования стека
+│   ├── rand_generate.py              # Generation of various data arrays
+│   ├── sorting_test.py               # Sorting algorithm tests
+│   ├── stack_test.py                 # Stack functionality tests
 │   └── __init__.py
-│    
+│
 ├── pyproject.toml
 ├── .pre-commit-config.yaml
 ├── .gitignore
-└── README.md                        # Описание проекта
+└── README.md                         # Project description
+
 </pre>
 
-## Класс BookCollection
-__getitem__ - получение одного(по элементу) или нескольких(по срезу) элементов списка
-__iter__
-__len__
-add/remove - методы добавления/удаления
 
-## Класс BookCatalog
-add/remove - методы добавления/удаления
-get_by_isbn/author/year - получение книги/книг по isbn/автору/году
+---
 
-## Класс Library
-поиск по нужным параметрам
+## BookCollection Class
+- `__getitem__` — retrieves one element (by index) or multiple elements (by slice)
+- `__iter__` — iterator support
+- `__len__` — returns the collection size
+- `add / remove` — methods for adding and removing items
 
-## Класс GenerateBook и GetWrittenBook
-генерация и получение вывод сгенеренной книги с помощью яндекс gpt. Наследуются от BaseLLMClients
+---
 
-## BaseLLMClients 
-Инкапсулирует общую инфраструктурную ответсвенность. Задаёт единый контракт взаимодействий с АPI. В него вынесено общее поведение этих двух классов(url, headers).
+## BookCatalog Class
+- `add / remove` — methods for adding and removing books
+- `get_by_isbn / author / year` — retrieves book(s) by ISBN, author, or publication year
 
- 
-В папке [src](src) лежат файлы с реализацией задачи заданной в лабораторной работе. 
-Библиотека работает полностью через терминал, вы должны выполнять инструкции из терминала(вводить нужные цифры). Ввод для написания собственной книги происходит каждый новый параметр с новой строки
+---
 
+## Library Class
+Provides search functionality based on specified parameters.
 
-В папке [tests](tests) лежат pytest для проверки функциональности программы или ее частей.
+---
+
+## GenerateBook and GetWrittenBook Classes
+Responsible for generating and retrieving AI-generated book content using **Yandex GPT**.
+
+Both classes inherit from `BaseLLMClients`.
+
+---
+
+## BaseLLMClients Class
+Encapsulates shared infrastructure responsibilities and defines a unified API interaction contract.
+
+Common behavior such as request URLs and headers is centralized in this class.
+
+---
+
+## Additional Information
+The `src` directory contains the implementation files required to complete the laboratory assignment.
+
+The library operates entirely via the command line interface. Users must follow terminal instructions and enter the required numeric options.
+
+When writing a custom book, each parameter must be entered on a new line.
+
+The `tests` directory contains **Pytest** test cases used to validate the functionality of the application and its individual components.
+

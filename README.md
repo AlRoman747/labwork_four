@@ -84,3 +84,5 @@ When writing a custom book, each parameter must be entered on a new line.
 
 The `tests` directory contains **Pytest** test cases used to validate the functionality of the application and its individual components.
 
+Your simaulation in n.1 had seed
+
